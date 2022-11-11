@@ -10,7 +10,7 @@ namespace {
 
 NAN_METHOD(New) {}
 
-void Init(Local<Object> exports, Local<Object> module) {
+NODE_MODULE_INIT(/* exports, module, context */) {
   Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
   tpl->SetClassName(Nan::New("Language").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
@@ -20,9 +20,9 @@ void Init(Local<Object> exports, Local<Object> module) {
   Nan::SetInternalFieldPointer(instance, 0, tree_sitter_javascript());
 
   Nan::Set(instance, Nan::New("name").ToLocalChecked(), Nan::New("javascript").ToLocalChecked());
-  Nan::Set(module, Nan::New("exports").ToLocalChecked(), instance);
-}
 
-NODE_MODULE(tree_sitter_javascript_binding, Init)
+  Nan::MaybeLocal<v8::Object> moduleObj = Nan::To<v8::Object>(module);
+  Nan::Set(moduleObj.ToLocalChecked(), Nan::New("exports").ToLocalChecked(), instance);
+}
 
 }  // namespace
